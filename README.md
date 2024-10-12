@@ -28,6 +28,6 @@
 ![image](https://github.com/dengdev/LostIsland2/blob/main/Screenshots/6.png)  
 
 ## 五、说明  
-   1.所有版本为Unity 2022.3.41，用Unity打开文件，打开Persistent场景即可运行  
-   2.游戏所用贴图以及音乐资源由B站UP主 M_Studio 提供  
+   1.所用版本为Unity 2022.3.41，用Unity打开文件后，点击Persistent场景运行  
+   2.游戏所用素材以及音乐资源由UP主M_Studio提供  
    3.目前只负责功能实现，可玩性类内容较少，后期会不断扩展  

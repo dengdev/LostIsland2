@@ -17,6 +17,7 @@ public class CharacterH2 : Interactive {
     }
 
     protected override void OnclickedAction() {
+        ShowPopup("³É¹¦ËÍ»Ø´¬Æ±£¡");
         dialogueController.ShowDialogueFinish();
     }
 }

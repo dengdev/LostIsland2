@@ -1,8 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour, Isaveable {
+    public Canvas mainCanvas;
+
     private Dictionary<string, bool> miniGameStateDict = new Dictionary<string, bool>();
     private GameController currentGame;
     private int gameWeek;
@@ -24,13 +27,27 @@ public class GameManager : MonoBehaviour, Isaveable {
         miniGameStateDict.Clear();
     }
 
-    void Start() {
-        SceneManager.LoadScene( SceneName.Menu.ToString(), LoadSceneMode.Additive);
+    private void Start() {
+        StartCoroutine(LoadMenuScene());
+
         EventHandler.CallGameStateChangeEvent(GameState.GamePlay);
 
         Isaveable saveable = this;
         saveable.SaveableRegister();
+
         MusicManager.Instance.PlayPaperWings();
+    }
+
+    private IEnumerator LoadMenuScene() {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneName.Menu.ToString(), LoadSceneMode.Additive);
+
+        while (!asyncLoad.isDone) {
+            yield return null;
+        }
+
+        if (mainCanvas != null) {
+            mainCanvas.gameObject.SetActive(true);
+        }
     }
 
 

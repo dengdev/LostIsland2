@@ -30,6 +30,7 @@ public class MailBox : Interactive {
     }
 
     protected override void OnclickedAction() {
+        ShowPopup("成功打开邮箱！");
         spriteRenderer.sprite = openSprite;
         transform.GetChild(0).gameObject.SetActive(true);
     }

@@ -23,9 +23,9 @@ public static class EventHandler {
     }
 
     // 使用物品要触发的事件
-    public static event Action<ItemName> ItemUsedEvent;
-    public static void CallItemUsedEvent(ItemName itemname) {
-        ItemUsedEvent?.Invoke(itemname);
+    public static event Action<ItemName> UseItemEvent;
+    public static void CallUseItemEvent(ItemName itemname) {
+        UseItemEvent?.Invoke(itemname);
     }
 
     public static event Action<int> ChangeItemEvent;

@@ -1,5 +1,5 @@
 public enum ItemName {
-    None, Key, Ticket
+    None, Key, Ticket, Prinogem, DamagedMask, CorLapis
 }
 
 public enum GameState {
@@ -10,5 +10,5 @@ public enum BallName {
 }
 
 public enum SceneName {
-    H1, H2,H2A, H3, H4,Menu
+    H1, H2,H2A, H3, H4,Menu,H5
 }

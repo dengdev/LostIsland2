@@ -1426,7 +1426,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1495540693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2073,6 +2073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemImage: {fileID: 1905282948}
   tooltip: {fileID: 922298203}
+  background: {fileID: 463200570}
 --- !u!1 &2138453093
 GameObject:
   m_ObjectHideFlags: 0
@@ -2102,7 +2103,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2201,6 +2202,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openRoadClip: {fileID: 8300000, guid: 8dc12a45270349541a2ee9dbcee8a312, type: 3}
   paperWingsClip: {fileID: 8300000, guid: cb6bf4cf1fe75f74787ab18b56a82346, type: 3}
+  confirmSound: {fileID: 8300000, guid: cf9fb53d3482ff1408a61ced10c07de6, type: 3}
+  cancelSound: {fileID: 8300000, guid: ded3d6f8f783b0f4e84b8d64d6f6b0a6, type: 3}
 --- !u!4 &2138453096
 Transform:
   m_ObjectHideFlags: 0

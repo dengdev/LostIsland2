@@ -25,7 +25,7 @@ public class MailBox : Interactive {
             transform.GetChild(0).gameObject.SetActive(false);
         } else {
             spriteRenderer.sprite = openSprite;
-            coll.enabled = false;
+            //coll.enabled = false;
         }
     }
 
@@ -33,5 +33,9 @@ public class MailBox : Interactive {
         ShowPopup("成功打开邮箱！");
         spriteRenderer.sprite = openSprite;
         transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+    public override void EmptyClicked() {
+        ShowPopup("打开邮箱需要一把钥匙");
     }
 }

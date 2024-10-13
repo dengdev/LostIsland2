@@ -1,10 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour {
     public Button leftButton, rightButton;
     public SlotUI slotUI;
-    public int currentIndex; 
+    public int currentIndex;
+
+    private List<ItemName> itemList;
+
+    private void Start() {
+        itemList = InventoryManager.Instance.itemList;
+    }
 
     private void OnEnable() {
         EventHandler.UpdateUIEvent += OnUpdateUIEvent;
@@ -19,22 +26,16 @@ public class InventoryUI : MonoBehaviour {
         if (itemDetails == null) {
             slotUI.SetEmpty();
             currentIndex = -1;
+
             leftButton.interactable = false;
             rightButton.interactable = false;
         } else {
             currentIndex = index;
             slotUI.SetItem(itemDetails);
 
-            if (index > 0) {
-                leftButton.interactable = true;
-            }
-
-            if (index == -1) {
-                rightButton.interactable = false;
-                leftButton.interactable |= false;
-            }
+            leftButton.interactable = index > 0;
+            rightButton.interactable = index < itemList.Count - 1; // 防止越界
         }
-
     }
 
     /// <summary>
@@ -42,18 +43,18 @@ public class InventoryUI : MonoBehaviour {
     /// </summary>
     /// <param name="amout"></param>
     public void SwitchItem(int amout) {
-        var index = currentIndex + amout;
-        if (index < currentIndex) {
-            leftButton.interactable = false;
-            rightButton.interactable = true;
-        } else if (index > currentIndex) {
-            leftButton.interactable = true;
-            rightButton.interactable = false;
-        } else // 多余两个物体的情况
-          {
-            leftButton.interactable = true;
-            rightButton.interactable = true;
+        int index = currentIndex + amout;
+
+        if (index < 0) {
+            index = 0;
+        } else if (index >= itemList.Count) {
+            index = itemList.Count - 1;
+
         }
+
+        leftButton.interactable = index > 0;
+        rightButton.interactable = index < itemList.Count - 1;
+
         EventHandler.CallChangeItemEvent(index);
     }
 }

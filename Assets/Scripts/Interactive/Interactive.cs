@@ -6,26 +6,25 @@ public class Interactive : MonoBehaviour {
     public ItemName requireItem;
     public bool isDone;
 
-    private float popupDuration = 1.5f;
-    private float moveDistance = 80f; 
+    protected float popupDuration = 2.2f;
+    private float upOffset = 160f;
 
-    public void CheckItem(ItemName itemname) {  
+    public void CheckItem(ItemName itemname) {
         if (requireItem == itemname && !isDone) {
             isDone = true;
             // 使用并移除背包中的物品
             OnclickedAction();
-            EventHandler.CallItemUsedEvent(itemname);
+            EventHandler.CallUseItemEvent(itemname);
+        } else if (requireItem != itemname) {
+            ShowPopup("这个物品不能使用在这里！");
         }
     }
 
-    /// <summary>
-    /// 默认是正确的物品执行
-    /// </summary>
     protected virtual void OnclickedAction() {
+
     }
 
     public virtual void EmptyClicked() {
-        ShowPopup("你手上没有所需的物品");
     }
 
     protected void ShowPopup(string message) {
@@ -45,12 +44,12 @@ public class Interactive : MonoBehaviour {
 
         popupInstance.GetComponent<CanvasGroup>().alpha = 1f;
 
-        rectTransform.DOLocalMoveY(rectTransform.localPosition.y + moveDistance, popupDuration)
+        rectTransform.DOLocalMoveY(rectTransform.localPosition.y + upOffset, popupDuration)
             .OnStart(() => popupInstance.GetComponent<CanvasGroup>().alpha = 1)
             .OnUpdate(() => {
-                float elapsed = rectTransform.localPosition.y / moveDistance;
+                float elapsed = rectTransform.localPosition.y / upOffset;
                 popupInstance.GetComponent<CanvasGroup>().alpha = Mathf.Lerp(1f, 0f, elapsed);
             })
-            .OnComplete(() => Destroy(popupInstance)); 
+            .OnComplete(() => Destroy(popupInstance));
     }
 }

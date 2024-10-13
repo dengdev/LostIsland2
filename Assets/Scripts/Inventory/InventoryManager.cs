@@ -4,18 +4,18 @@ using UnityEngine;
 public class InventoryManager : Singleton<InventoryManager>, Isaveable {
     public ItemDataList_SO itemData;
 
-    [SerializeField] private List<ItemName> itemList = new List<ItemName>();
+    public List<ItemName> itemList = new List<ItemName>();
 
     private void OnEnable() {
-        EventHandler.ItemUsedEvent += OnItemUsedEvent;
-        EventHandler.ChangeItemEvent += OnChangerItemEvent;
+        EventHandler.UseItemEvent += OnUseItemEvent;
+        EventHandler.ChangeItemEvent += OnChangeItemEvent;
         EventHandler.AfterSceneloadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.StarNewGameEvent += OnStarNewGameEvent;
     }
 
     private void OnDisable() {
-        EventHandler.ItemUsedEvent -= OnItemUsedEvent;
-        EventHandler.ChangeItemEvent -= OnChangerItemEvent;
+        EventHandler.UseItemEvent -= OnUseItemEvent;
+        EventHandler.ChangeItemEvent -= OnChangeItemEvent;
         EventHandler.AfterSceneloadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.StarNewGameEvent -= OnStarNewGameEvent;
     }
@@ -40,22 +40,25 @@ public class InventoryManager : Singleton<InventoryManager>, Isaveable {
         }
     }
 
-    private void OnChangerItemEvent(int index) {
+    private void OnChangeItemEvent(int index) {
         if (index >= 0 && index < itemList.Count) {
             ItemDetails item = itemData.GetItemDetails(itemList[index]);
             EventHandler.CallUpdateUIEvent(item, index);
+        } else {
+            EventHandler.CallUpdateUIEvent(null, -1); // 索引无效时清空UI
         }
     }
 
-    private void OnItemUsedEvent(ItemName itemName) {
-        // 获取物品在列表中的索引
+    private void OnUseItemEvent(ItemName itemName) {
         int index = GetItemIndex(itemName);
         itemList.RemoveAt(index);
 
-        //ToDo 暂时实现单一物品使用效果
-        // 如果物品列表为空，调用UI更新事件，清空显示
-        if (itemList.Count == 0)
-            EventHandler.CallUpdateUIEvent(null, -1);
+        if (itemList.Count == 0) {
+            EventHandler.CallUpdateUIEvent(null, -1); // 清空UI
+        } else {
+            int nextIndex = Mathf.Clamp(index, 0, itemList.Count - 1);
+            EventHandler.CallUpdateUIEvent(itemData.GetItemDetails(itemList[nextIndex]), nextIndex);
+        }
     }
 
     public void AddItem(ItemName itemName) {

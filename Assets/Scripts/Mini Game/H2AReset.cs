@@ -9,6 +9,8 @@ public class H2AReset : Interactive {
     }
 
     public override void EmptyClicked() {
+        MusicManager.Instance.PlayConcelSound();
+        ShowPopup("球体已经重新归位");
         GameController.Instance.Resetgame();
         gearSprite.DOPunchRotation(Vector3.forward * 180, 1, 1, 0);
     }

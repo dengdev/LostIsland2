@@ -17,3 +17,9 @@ MonoBehaviour:
     itemSprite: {fileID: 21300000, guid: 18648d0cdcf915e448523cd1187a3404, type: 3}
   - itemName: 2
     itemSprite: {fileID: 21300000, guid: 7ecc04c193332994ca46437db75d22e2, type: 3}
+  - itemName: 3
+    itemSprite: {fileID: 21300000, guid: 82f9f44a7da0c084a801497329af91b3, type: 3}
+  - itemName: 4
+    itemSprite: {fileID: 21300000, guid: 9636db5d868cca24e9823839c892fd87, type: 3}
+  - itemName: 5
+    itemSprite: {fileID: 21300000, guid: 0c2c8ba3e22039342abed2512098936c, type: 3}

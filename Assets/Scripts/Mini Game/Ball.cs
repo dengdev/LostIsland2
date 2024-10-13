@@ -20,6 +20,7 @@ public class Ball : MonoBehaviour {
     }
 
     public void SetRight() {
+        MusicManager.Instance.PlayConfirmSound();
         spriteRenderer.sprite = ballDetails.rightSprite;
     }
 

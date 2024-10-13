@@ -6,8 +6,11 @@ public class ItemTooltip : MonoBehaviour {
 
     public void updateItemname(ItemName itemName) {
         itemNameText.text = itemName switch {
-            ItemName.Key => "信箱钥匙",
+            ItemName.Key => "邮箱钥匙",
             ItemName.Ticket => "一张船票",
+            ItemName.Prinogem=>"祈愿石",
+            ItemName.DamagedMask=>"破面具",
+            ItemName.CorLapis=>"琥珀",
             _ => "默认"
         };
     }

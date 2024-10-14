@@ -13,16 +13,18 @@ public class Menu : MonoBehaviour {
         SaveLoadManager.Instance.Load();
     }
 
-    public void GoBackToMenu() {
-        MusicManager.Instance.PlayConfirmSound();
-        TransitionManager.Instance.Transition(
-            (SceneName)System.Enum.Parse(typeof(SceneName), SceneManager.GetActiveScene().name),
-            TransitionManager.Instance.menuName);
-        SaveLoadManager.Instance.Save();
-    }
-
     public void StartGameWeek(int gameWeek) {
+        GameManager.Instance.mainCanvas.gameObject.SetActive(false);
         MusicManager.Instance.PlayConfirmSound();
         EventHandler.CallStarNewGameEvent(gameWeek);
+    }
+
+    public void ToggleSettingPanel() {
+        Transform panelTransform = this.transform.Find("SettingsPanel");
+
+        if (panelTransform != null) {
+            bool isActive = panelTransform.gameObject.activeSelf;
+            panelTransform.gameObject.SetActive(!isActive);
+        }
     }
 }

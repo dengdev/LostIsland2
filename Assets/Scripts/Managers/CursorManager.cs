@@ -2,62 +2,82 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CursorManager : Singleton<CursorManager> {
-    public RectTransform hand;
+    public Texture2D defaultCursor;
+    public Texture2D clickableCursor;
+    public Texture2D handCursor;
 
-    private Vector3 MouseWorldPos => Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
+    public Vector2 cursorHotspot = Vector2.zero;
 
     private ItemName currentItem;
-    private bool canClick;
     private bool holdItem;
 
     private void OnEnable() {
-        EventHandler.ItemSelectedEvent += OnItemSelectedevent;
+        EventHandler.ItemSelectedEvent += OnItemSelectedEvent;
         EventHandler.UseItemEvent += OnUseItemEvent;
     }
 
     private void OnDisable() {
-        EventHandler.ItemSelectedEvent -= OnItemSelectedevent;
+        EventHandler.ItemSelectedEvent -= OnItemSelectedEvent;
         EventHandler.UseItemEvent -= OnUseItemEvent;
     }
 
     private void Update() {
-        canClick = ObjectAtMousePosition();
 
-        if (hand.gameObject.activeInHierarchy) {
-            hand.position = Input.mousePosition;
+        if (Input.GetMouseButtonDown(1) && holdItem) {
+            MusicManager.Instance.PlayConcelSound();
+            EventHandler.CallRetunItemEvent(currentItem);
+            CancelItemSelection();
+            return; 
         }
 
-        if (InteractWithUI()) return;
-
-        if (canClick && Input.GetMouseButtonDown(0)) {
-            ClickAction(ObjectAtMousePosition().gameObject);
+        if (InteractWithUI()) {
+            SetCursor(defaultCursor);
+            return;
         }
+
+        Collider2D hitObject = ObjectAtMousePosition();
+        SetCursor(holdItem ? handCursor :GetCursorBasedOnTag(hitObject) );
+
+        if (hitObject && Input.GetMouseButtonDown(0)) {
+            ClickAction(hitObject.gameObject);
+        }
+    }
+    private void CancelItemSelection() {
+        holdItem = false; 
+        currentItem = ItemName.None;
+        SetCursor(defaultCursor);
     }
 
     private void OnUseItemEvent(ItemName name) {
-        currentItem = ItemName.None;
-        holdItem = false;
-        hand.gameObject.SetActive(false);
+        CancelItemSelection();
     }
 
-    private void OnItemSelectedevent(ItemDetails itemDetails, bool isSelected) {
+    private void OnItemSelectedEvent(ItemDetails itemDetails, bool isSelected) {
+        holdItem = isSelected;
+        currentItem = isSelected ? itemDetails.itemName : ItemName.None;
+        SetCursor(holdItem ? handCursor : defaultCursor);
+    }
 
-        if (isSelected) {
-            holdItem = true;
-            currentItem = itemDetails.itemName;
-        } else {
-            holdItem = false;
-            currentItem = ItemName.None;
+    private Texture2D GetCursorBasedOnTag(Collider2D hitObject) {
+        if (hitObject == null) return defaultCursor;
+        switch (hitObject.tag) {
+            case "Teleport":
+            case "Item":
+                return clickableCursor;
+            case "Interactive":
+                return holdItem ? handCursor : clickableCursor;
+            default:
+                return defaultCursor;
         }
-        hand.gameObject.SetActive(holdItem);
     }
 
     private void ClickAction(GameObject clickObject) {
         switch (clickObject.tag) {
             case "Teleport":
-                if (holdItem) return;
-                Teleport teleport = clickObject.GetComponent<Teleport>();
-                teleport?.TeleportToScene();
+                if (!holdItem) {
+                    Teleport teleport = clickObject.GetComponent<Teleport>();
+                    teleport?.TeleportToScene();
+                }
                 break;
             case "Item":
                 Item item = clickObject.GetComponent<Item>();
@@ -73,20 +93,16 @@ public class CursorManager : Singleton<CursorManager> {
         }
     }
 
-
-    /// <summary>
-    ///  ¼ì²âÊó±êµã»÷·¶Î§µÄÅö×²Ìå
-    /// </summary>
     private Collider2D ObjectAtMousePosition() {
-        return Physics2D.OverlapPoint(MouseWorldPos);
+        return Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
-    /// <summary>
-    ///  ÅÐ¶ÏÊÇ·ñ¸úUI»¥¶¯
-    /// </summary>
     private bool InteractWithUI() {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            return true;
-        return false;
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
     }
+
+    private void SetCursor(Texture2D cursorType) {
+        Cursor.SetCursor(cursorType, cursorHotspot, CursorMode.Auto);
+    }
+
 }

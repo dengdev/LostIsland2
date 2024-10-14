@@ -57,4 +57,6 @@ public static class EventHandler {
     public static void CallStarNewGameEvent(int gameWeek) {
         StarNewGameEvent?.Invoke(gameWeek);
     }
+    public static event Action<ItemName> RetunItemEvent;
+    public static void CallRetunItemEvent(ItemName itemname_useless) { RetunItemEvent?.Invoke(itemname_useless); }
 }

@@ -9,6 +9,9 @@ public class Interactive : MonoBehaviour {
     protected float popupDuration = 2.2f;
     private float upOffset = 160f;
 
+    private float lastPopupTime = 0f; 
+    private const float popupInterval = 0.4f; 
+
     public void CheckItem(ItemName itemname) {
         if (requireItem == itemname && !isDone) {
             isDone = true;
@@ -28,6 +31,12 @@ public class Interactive : MonoBehaviour {
     }
 
     protected void ShowPopup(string message) {
+
+        if (Time.time - lastPopupTime < popupInterval) {
+            return;
+        }
+
+        lastPopupTime = Time.time;
         GameObject popup = Resources.Load<GameObject>("Prefabs/Tip");
         if (popup == null) {
             Debug.LogError("无法加载文本框预制体，路径为空");

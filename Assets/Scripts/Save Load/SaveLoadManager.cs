@@ -37,7 +37,7 @@ public class SaveLoadManager : Singleton<SaveLoadManager> {
         saveableDict.Clear();
 
         foreach (var saveable in saveableList) {
-            saveableDict.Add(saveable.GetType().Name, saveable.GeneratesaveData());
+            saveableDict.Add(saveable.GetType().Name, saveable.GenerateSaveData());
         }
 
         string resultPath = jsonFloder + "data.sav";
@@ -60,7 +60,7 @@ public class SaveLoadManager : Singleton<SaveLoadManager> {
         Dictionary<string, GameSaveData> jsonData = JsonConvert.DeserializeObject<Dictionary<string, GameSaveData>>(stringData);
 
         foreach (Isaveable saveable in saveableList) {
-            saveable.RestoreGameData(jsonData[saveable.GetType().Name]);
+            saveable.RestoreSavedGameData(jsonData[saveable.GetType().Name]);
         }
     }
 }

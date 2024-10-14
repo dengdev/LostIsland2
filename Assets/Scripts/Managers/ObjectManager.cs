@@ -1,22 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectManager : MonoBehaviour, Isaveable {
-    private Dictionary<ItemName, bool> itemAvailableDict = new Dictionary<ItemName, bool>();
-    private Dictionary<string, bool> interactiveStateDict = new Dictionary<string, bool>();
+public class ObjectManager : Singleton<ObjectManager>, Isaveable {
+    private Dictionary<ItemName, bool> availableItems = new Dictionary<ItemName, bool>();
+    private Dictionary<string, bool> interactiveObjectStates = new Dictionary<string, bool>();
 
     private void OnEnable() {
-        EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
-        EventHandler.AfterSceneloadedEvent += OnAfterSceneLoadedEvent;
-        EventHandler.UpdateUIEvent += OnUpdateUIEvent;
-        EventHandler.StarNewGameEvent += OnStartNewGameEvent;
+        EventHandler.BeforeSceneUnloadEvent += HandleBeforeSceneUnload;
+        EventHandler.AfterSceneloadedEvent += HandleAfterSceneLoaded;
+        EventHandler.UpdateUIEvent += HandleUpdateUIEvent;
+        EventHandler.StarNewGameEvent += HandleStartNewGameEvent;
     }
 
     private void OnDisable() {
-        EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
-        EventHandler.AfterSceneloadedEvent -= OnAfterSceneLoadedEvent;
-        EventHandler.UpdateUIEvent -= OnUpdateUIEvent;
-        EventHandler.StarNewGameEvent -= OnStartNewGameEvent;
+        EventHandler.BeforeSceneUnloadEvent -= HandleBeforeSceneUnload;
+        EventHandler.AfterSceneloadedEvent -= HandleAfterSceneLoaded;
+        EventHandler.UpdateUIEvent -= HandleUpdateUIEvent;
+        EventHandler.StarNewGameEvent -= HandleStartNewGameEvent;
     }
 
     private void Start() {
@@ -24,60 +24,79 @@ public class ObjectManager : MonoBehaviour, Isaveable {
         saveable.SaveableRegister();
     }
 
-    private void OnStartNewGameEvent(int obj) {
-        itemAvailableDict.Clear();
-        interactiveStateDict.Clear();
+    private void HandleStartNewGameEvent(int obj) {
+        availableItems.Clear();
+        interactiveObjectStates.Clear();
     }
 
-    private void OnBeforeSceneUnloadEvent() {
+    /// <summary>
+    /// 交互后及时更新,而不是等到场景切换
+    /// </summary>
+    /// <param name="interactiveName"></param>
+    /// <param name="isDone"></param>
+    public void UpdateInteractiveState(string interactiveName, bool isDone) {
+        if (interactiveObjectStates.ContainsKey(interactiveName)) {
+            interactiveObjectStates[interactiveName] = isDone;
+        } else {
+            interactiveObjectStates.Add(interactiveName, isDone);
+        }
+    }
+
+    /// <summary>
+    /// 收集当前的物品和交互状态
+    /// </summary>
+    private void HandleBeforeSceneUnload() {
 
         foreach (Item item in FindObjectsOfType<Item>()) {
-            if (!itemAvailableDict.ContainsKey(item.itemName)) {
-                itemAvailableDict.Add(item.itemName, true);
+            if (!availableItems.ContainsKey(item.itemName)) {
+                availableItems.Add(item.itemName, true);
             }
         }
 
         foreach (Interactive interactive in FindObjectsOfType<Interactive>()) {
-            if (interactiveStateDict.ContainsKey(interactive.name))
-                interactiveStateDict[interactive.name] = interactive.isDone;
+            if (interactiveObjectStates.ContainsKey(interactive.name))
+                interactiveObjectStates[interactive.name] = interactive.isDone;
             else
-                interactiveStateDict.Add(interactive.name, interactive.isDone);
+                interactiveObjectStates.Add(interactive.name, interactive.isDone);
         }
     }
 
-    private void OnAfterSceneLoadedEvent() {
+    /// <summary>
+    /// 恢复物品和交互对象的状态
+    /// </summary>
+    private void HandleAfterSceneLoaded() {
 
         foreach (Item item in FindObjectsOfType<Item>()) {
-            if (!itemAvailableDict.ContainsKey(item.itemName)) {
-                itemAvailableDict.Add(item.itemName, true);
+            if (!availableItems.ContainsKey(item.itemName)) {
+                availableItems.Add(item.itemName, true);
             } else
-                item.gameObject.SetActive(itemAvailableDict[item.itemName]);
+                item.gameObject.SetActive(availableItems[item.itemName]);
         }
 
         foreach (Interactive interactive in FindObjectsOfType<Interactive>()) {
-            if (interactiveStateDict.ContainsKey(interactive.name))
-                interactive.isDone = interactiveStateDict[interactive.name];
+            if (interactiveObjectStates.ContainsKey(interactive.name))
+                interactive.isDone = interactiveObjectStates[interactive.name];
             else
-                interactiveStateDict.Add(interactive.name, interactive.isDone);
+                interactiveObjectStates.Add(interactive.name, interactive.isDone);
         }
     }
 
     // 这方法只在拾取场景物品时更新，拾取代表着场景物品变成false
-    private void OnUpdateUIEvent(ItemDetails itemdetails, int arg2) {
+    private void HandleUpdateUIEvent(ItemDetails itemdetails, int arg2) {
         if (itemdetails != null) {
-            itemAvailableDict[itemdetails.itemName] = false;
+            availableItems[itemdetails.itemName] = false;
         }
     }
 
-    public GameSaveData GeneratesaveData() {
+    public GameSaveData GenerateSaveData() {
         GameSaveData saveData = new GameSaveData();
-        saveData.itemAvailableDict = this.itemAvailableDict;
-        saveData.interactiveStateDict = this.interactiveStateDict;
+        saveData.itemAvailableDict = this.availableItems;
+        saveData.interactiveStateDict = this.interactiveObjectStates;
         return saveData;
     }
 
-    public void RestoreGameData(GameSaveData saveData) {
-        this.itemAvailableDict = saveData.itemAvailableDict;
-        this.interactiveStateDict = saveData.interactiveStateDict;
+    public void RestoreSavedGameData(GameSaveData saveData) {
+        this.availableItems = saveData.itemAvailableDict;
+        this.interactiveObjectStates = saveData.interactiveStateDict;
     }
 }

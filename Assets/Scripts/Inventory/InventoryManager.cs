@@ -78,13 +78,13 @@ public class InventoryManager : Singleton<InventoryManager>, Isaveable {
         return -1;
     }
 
-    public GameSaveData GeneratesaveData() {
+    public GameSaveData GenerateSaveData() {
         GameSaveData saveData = new GameSaveData();
         saveData.itemList = this.itemList;
         return saveData;
     }
 
-    public void RestoreGameData(GameSaveData saveData) {
+    public void RestoreSavedGameData(GameSaveData saveData) {
         this.itemList = saveData.itemList;
     }
 }

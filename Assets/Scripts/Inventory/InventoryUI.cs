@@ -7,12 +7,6 @@ public class InventoryUI : MonoBehaviour {
     public SlotUI slotUI;
     public int currentIndex;
 
-    private List<ItemName> itemList;
-
-    private void Start() {
-        itemList = InventoryManager.Instance.itemList;
-    }
-
     private void OnEnable() {
         EventHandler.UpdateUIEvent += OnUpdateUIEvent;
     }
@@ -34,7 +28,7 @@ public class InventoryUI : MonoBehaviour {
             slotUI.SetItem(itemDetails);
 
             leftButton.interactable = index > 0;
-            rightButton.interactable = index < itemList.Count - 1; // 防止越界
+            rightButton.interactable = index < InventoryManager.Instance.itemList.Count - 1; // 防止越界
         }
     }
 
@@ -47,13 +41,13 @@ public class InventoryUI : MonoBehaviour {
 
         if (index < 0) {
             index = 0;
-        } else if (index >= itemList.Count) {
-            index = itemList.Count - 1;
+        } else if (index >= InventoryManager.Instance.itemList.Count) {
+            index = InventoryManager.Instance.itemList.Count - 1;
 
         }
 
         leftButton.interactable = index > 0;
-        rightButton.interactable = index < itemList.Count - 1;
+        rightButton.interactable = index < InventoryManager.Instance.itemList.Count - 1;
 
         EventHandler.CallChangeItemEvent(index);
     }

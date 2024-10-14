@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour, Isaveable {
+public class GameManager : Singleton<GameManager>, Isaveable {
     public Canvas mainCanvas;
 
     private Dictionary<string, bool> miniGameStateDict = new Dictionary<string, bool>();
@@ -40,13 +40,8 @@ public class GameManager : MonoBehaviour, Isaveable {
 
     private IEnumerator LoadMenuScene() {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneName.Menu.ToString(), LoadSceneMode.Additive);
-
         while (!asyncLoad.isDone) {
             yield return null;
-        }
-
-        if (mainCanvas != null) {
-            mainCanvas.gameObject.SetActive(true);
         }
     }
 
@@ -67,14 +62,14 @@ public class GameManager : MonoBehaviour, Isaveable {
         miniGameStateDict[gameName] = true;
     }
 
-    public GameSaveData GeneratesaveData() {
+    public GameSaveData GenerateSaveData() {
         GameSaveData saveData = new GameSaveData();
         saveData.gameWeek = this.gameWeek;
         saveData.miniGameStateDict = this.miniGameStateDict;
         return saveData;
     }
 
-    public void RestoreGameData(GameSaveData saveData) {
+    public void RestoreSavedGameData(GameSaveData saveData) {
         this.gameWeek = saveData.gameWeek;
         this.miniGameStateDict = saveData.miniGameStateDict;
     }

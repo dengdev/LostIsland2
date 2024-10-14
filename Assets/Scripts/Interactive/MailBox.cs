@@ -33,9 +33,15 @@ public class MailBox : Interactive {
         ShowPopup("成功打开邮箱！");
         spriteRenderer.sprite = openSprite;
         transform.GetChild(0).gameObject.SetActive(true);
+        ObjectManager.Instance.UpdateInteractiveState(this.name, true);
     }
 
     public override void EmptyClicked() {
-        ShowPopup("打开邮箱需要一把钥匙");
+        if (!isDone) {
+            ShowPopup("打开邮箱需要一把钥匙");
+
+        } else {
+            ShowPopup("现在它只是一个空邮箱");
+        }
     }
 }

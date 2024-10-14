@@ -10,5 +10,5 @@ public enum BallName {
 }
 
 public enum SceneName {
-    H1, H2,H2A, H3, H4,Menu,H5
+    H1, H2,H2A, H3, H4,Menu,H5, Transition
 }

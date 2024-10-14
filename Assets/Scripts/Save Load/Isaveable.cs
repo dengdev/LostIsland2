@@ -3,6 +3,6 @@ public interface Isaveable {
         SaveLoadManager.Instance.Register(this);
     }
 
-    GameSaveData GeneratesaveData();
-    void RestoreGameData(GameSaveData saveData);
+    GameSaveData GenerateSaveData();
+    void RestoreSavedGameData(GameSaveData saveData);
 }

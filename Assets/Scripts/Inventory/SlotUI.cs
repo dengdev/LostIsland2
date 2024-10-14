@@ -14,10 +14,13 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     private void OnEnable() {
         EventHandler.UseItemEvent += EventHandler_UseItemEvent;
+        EventHandler.RetunItemEvent += EventHandler_UseItemEvent;
+
     }
 
     private void OnDisable() {
         EventHandler.UseItemEvent -= EventHandler_UseItemEvent;
+        EventHandler.RetunItemEvent -= EventHandler_UseItemEvent;
     }
 
     private void EventHandler_UseItemEvent(ItemName obj) {
